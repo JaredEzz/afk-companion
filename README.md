@@ -41,8 +41,10 @@ chat trigger you write as a regular expression.
 **Skilling and combat** — your animation stopped, you are out of combat, inventory full, an item
 from your watch list ran out, low ammo, special attack back to 100%, aggression about to expire.
 
-**Slayer and cannon** — a superior spawned, your dwarf multicannon ran out of cannonballs (with an
-optional warning a few balls earlier), your bracelet of slaughter or expeditious bracelet crumbled.
+**Slayer and cannon** — a superior spawned, your task is finished, your dwarf multicannon ran out
+of cannonballs (with an optional warning a few balls earlier) or decayed, your bracelet of
+slaughter or expeditious bracelet crumbled. For a particular slayer drop, put its name in the
+drop list above.
 
 **Woodcutting and Forestry** — a bird's nest fell (or only clue nests from a tier you pick
 upwards), and each Forestry event with its own switch: Rising Roots, Struggling Sapling,
@@ -93,9 +95,9 @@ Useful settings:
 - **Discord mention** — who to ping. Paste a user id, a role id prefixed with `&`, or
   `@everyone` / `@here`; get an id by enabling Developer Mode in Discord and using Copy ID.
   *Only ping when urgent* limits it to death, low hitpoints, poison, running out of something,
-  valuable drops, a superior, an empty cannon and clue nests. The ping goes in the message
-  content rather than the embed, because a mention inside an embed is displayed but never
-  actually notifies anyone.
+  valuable drops, a superior, a finished task, an empty or decayed cannon and clue nests. The
+  ping goes in the message content rather than the embed, because a mention inside an embed is
+  displayed but never actually notifies anyone.
 
 ## Asking the client a question from your phone
 

@@ -540,6 +540,12 @@ public class AfkWatchdog
 					sink.notify(NotificationCategory.SLAYER, "Cannon", "Your cannon is out of ammo.", 5);
 				}
 				break;
+			case TASK_COMPLETE:
+				if (config.taskCompleteNotify())
+				{
+					sink.notify(NotificationCategory.SLAYER, "Slayer", "Task complete - return to a Slayer master.", 5);
+				}
+				break;
 			case SLAUGHTER_BROKE:
 				if (config.slaughterBrokeNotify())
 				{
@@ -566,6 +572,14 @@ public class AfkWatchdog
 		if (cannonWarning.update(cannonballs, config.cannonLowThreshold()))
 		{
 			sink.notify(NotificationCategory.SLAYER, "Cannon", "Your cannon has " + cannonballs + " cannonballs left.", 4);
+		}
+	}
+
+	public void onCannonDecayedChanged(int value, NotificationSink sink)
+	{
+		if (cannonWarning.decayed(value) && config.cannonDecayNotify())
+		{
+			sink.notify(NotificationCategory.SLAYER, "Cannon", "Your cannon has decayed.", 5);
 		}
 	}
 

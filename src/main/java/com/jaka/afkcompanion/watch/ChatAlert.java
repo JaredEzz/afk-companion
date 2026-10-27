@@ -13,6 +13,7 @@ public enum ChatAlert
 	CANNON_EMPTY,
 	SLAUGHTER_BROKE,
 	EXPEDITIOUS_BROKE,
+	TASK_COMPLETE,
 	BIRD_NEST;
 
 	/*
@@ -23,6 +24,9 @@ public enum ChatAlert
 		"Your bracelet of slaughter prevents your slayer count from decreasing\\. It then crumbles to dust\\.");
 	private static final Pattern EXPEDITIOUS_BROKE_PATTERN = Pattern.compile(
 		"Your expeditious bracelet helps you progress your slayer (?:task )?faster\\. It then crumbles to dust\\.");
+
+	private static final Pattern TASK_COMPLETE_PATTERN = Pattern.compile(
+		"^You've completed [\\d,]+ (?:Wilderness )?tasks?.*; return to a Slayer master\\.$");
 
 	/**
 	 * @param message a game message with its formatting tags already removed
@@ -48,6 +52,11 @@ public enum ChatAlert
 		if (message.contains("A bird's nest falls out of the tree"))
 		{
 			return BIRD_NEST;
+		}
+
+		if (TASK_COMPLETE_PATTERN.matcher(message).find())
+		{
+			return TASK_COMPLETE;
 		}
 
 		if (SLAUGHTER_BROKE_PATTERN.matcher(message).find())

@@ -9,6 +9,9 @@ public class CannonWarning
 	private int lastCount;
 	private boolean warned;
 
+	/** -1 until the game has told us, so the value sent on login is never news. */
+	private int lastDecayed = -1;
+
 	/**
 	 * @param count cannonballs loaded in the cannon now
 	 * @param threshold warn at or below this many; 0 disables the warning
@@ -31,9 +34,21 @@ public class CannonWarning
 		return true;
 	}
 
+	/**
+	 * @param value the cannon's decayed flag, 1 once it has fallen apart
+	 * @return true when we saw it go from standing to decayed
+	 */
+	public boolean decayed(int value)
+	{
+		final boolean news = lastDecayed == 0 && value == 1;
+		lastDecayed = value;
+		return news;
+	}
+
 	public void reset()
 	{
 		lastCount = 0;
 		warned = false;
+		lastDecayed = -1;
 	}
 }

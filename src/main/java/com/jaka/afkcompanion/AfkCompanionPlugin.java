@@ -50,6 +50,7 @@ import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.StatChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.VarPlayerID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -494,6 +495,10 @@ public class AfkCompanionPlugin extends Plugin
 		if (event.getVarpId() == VarPlayerID.ROCKTHROWER && event.getVarbitId() == -1)
 		{
 			watchdog.onCannonballsChanged(event.getValue(), this::notify);
+		}
+		else if (event.getVarbitId() == VarbitID.MCANNON_DECAYED)
+		{
+			watchdog.onCannonDecayedChanged(event.getValue(), this::notify);
 		}
 	}
 

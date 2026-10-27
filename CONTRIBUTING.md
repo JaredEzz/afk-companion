@@ -67,8 +67,8 @@ src/main/java/com/jaka/afkcompanion/
   push/NtfyControl.java            read-only control channel from your phone
   gemstonecrab/                    tracker, overlay, infobox timers
   watch/AfkWatchdog.java           every general AFK warning
-  watch/ChatAlert.java             game messages that end an AFK: superior, cannon, bracelets
-  watch/CannonWarning.java         when the cannonball count is worth a warning
+  watch/ChatAlert.java             game messages that end an AFK: superior, task, cannon, bracelets
+  watch/CannonWarning.java         low cannonballs and a decayed cannon
   forestry/                        Forestry event ids, one notification per event, bird's nests
   stats/SessionStats.java          session and persisted lifetime totals
   util/                            formatting, quiet hours, name matching

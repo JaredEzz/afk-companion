@@ -43,7 +43,7 @@ public interface AfkCompanionConfig extends Config
 
 	@ConfigSection(
 		name = "Slayer and cannon",
-		description = "Superiors, an empty cannon and slayer bracelets breaking",
+		description = "Superiors, a finished task, your cannon and slayer bracelets breaking",
 		position = 4
 	)
 	String slayerSection = "slayer";
@@ -157,7 +157,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "discordMentionUrgentOnly",
 		name = "Only ping when urgent",
 		description = "Ping only for the most urgent notifications - death, low hitpoints, poison, running out "
-			+ "of something, valuable drops, a superior, an empty cannon, a clue nest - instead of every one.",
+			+ "of something, valuable drops, a superior, a finished task, your cannon, a clue nest - instead of every one.",
 		position = 7,
 		section = pushSection
 	)
@@ -415,7 +415,7 @@ public interface AfkCompanionConfig extends Config
 	@ConfigItem(
 		keyName = "quietAllowUrgent",
 		name = "Urgent still gets through",
-		description = "During quiet hours, still deliver the most urgent notifications: death, low HP, poison, valuable drops, superiors, an empty cannon, clue nests.",
+		description = "During quiet hours, still deliver the most urgent notifications: death, low HP, poison, valuable drops, superiors, a finished task, your cannon, clue nests.",
 		position = 28,
 		section = pushSection
 	)
@@ -635,7 +635,7 @@ public interface AfkCompanionConfig extends Config
 		description = "Comma separated item names. A drop containing one of them notifies you whatever it is "
 			+ "worth, so untradeables and items with no Grand Exchange price are covered too. "
 			+ "Matching is loose, so 'dragon' catches every dragon item. Example: dragon warhammer, "
-			+ "curved bone, uncut onyx. Leave empty to disable.",
+			+ "curved bone, uncut onyx, imbued heart. Leave empty to disable.",
 		position = 9,
 		section = afkSection
 	)
@@ -815,10 +815,22 @@ public interface AfkCompanionConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "taskCompleteNotify",
+		name = "Task complete",
+		description = "Notify when you finish your slayer task.",
+		position = 1,
+		section = slayerSection
+	)
+	default boolean taskCompleteNotify()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "cannonEmptyNotify",
 		name = "Cannon out of ammo",
 		description = "Notify when your dwarf multicannon runs out of cannonballs.",
-		position = 1,
+		position = 2,
 		section = slayerSection
 	)
 	default boolean cannonEmptyNotify()
@@ -833,7 +845,7 @@ public interface AfkCompanionConfig extends Config
 		description = "Warn when your cannon has this many cannonballs or fewer left, before it runs dry. 0 disables it. "
 			+ "Keep it well above zero: a warning sent just before the cannon empties can use up the cooldown "
 			+ "and hold back the out of ammo notification.",
-		position = 2,
+		position = 3,
 		section = slayerSection
 	)
 	default int cannonLowThreshold()
@@ -842,10 +854,22 @@ public interface AfkCompanionConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "cannonDecayNotify",
+		name = "Cannon decayed",
+		description = "Notify when your cannon falls apart from being left too long. Collect it from Nulodion.",
+		position = 4,
+		section = slayerSection
+	)
+	default boolean cannonDecayNotify()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "slaughterBrokeNotify",
 		name = "Bracelet of slaughter broke",
 		description = "Notify when your bracelet of slaughter crumbles to dust.",
-		position = 3,
+		position = 5,
 		section = slayerSection
 	)
 	default boolean slaughterBrokeNotify()
@@ -857,7 +881,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "expeditiousBrokeNotify",
 		name = "Expeditious bracelet broke",
 		description = "Notify when your expeditious bracelet crumbles to dust.",
-		position = 4,
+		position = 6,
 		section = slayerSection
 	)
 	default boolean expeditiousBrokeNotify()

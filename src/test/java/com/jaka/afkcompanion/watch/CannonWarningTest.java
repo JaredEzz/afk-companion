@@ -39,4 +39,22 @@ public class CannonWarningTest
 		warning.reset();
 		assertTrue(warning.update(5, 10));
 	}
+
+	@Test
+	public void reportsTheCannonDecayingOnlyWhenWeSawItHappen()
+	{
+		// The first value arrives on login; an already decayed cannon is not news.
+		assertFalse(warning.decayed(1));
+		assertFalse(warning.decayed(0));
+		assertTrue(warning.decayed(1));
+		assertFalse(warning.decayed(1));
+	}
+
+	@Test
+	public void resetForgetsTheDecayState()
+	{
+		warning.decayed(0);
+		warning.reset();
+		assertFalse(warning.decayed(1));
+	}
 }

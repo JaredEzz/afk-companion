@@ -56,6 +56,16 @@ public class ChatAlertTest
 	}
 
 	@Test
+	public void recognisesAFinishedTask()
+	{
+		assertEquals(ChatAlert.TASK_COMPLETE, ChatAlert.of(
+			"You've completed 52 tasks and received 15 points, giving you a total of 410; return to a Slayer master."));
+		assertEquals(ChatAlert.TASK_COMPLETE, ChatAlert.of("You've completed 3 tasks; return to a Slayer master."));
+		assertEquals(ChatAlert.TASK_COMPLETE, ChatAlert.of(
+			"You've completed 1 Wilderness task and received 25 points, giving you a total of 25; return to a Slayer master."));
+	}
+
+	@Test
 	public void ignoresEverythingElse()
 	{
 		assertNull(ChatAlert.of("You get some logs."));
