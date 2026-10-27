@@ -2,6 +2,10 @@ package com.jaka.afkcompanion;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
+import com.jaka.afkcompanion.forestry.BirdNest;
+import com.jaka.afkcompanion.forestry.ClueNestTier;
+import com.jaka.afkcompanion.forestry.ForestryEvent;
+import com.jaka.afkcompanion.forestry.ForestryWatch;
 import com.jaka.afkcompanion.gemstonecrab.CrabInfoBox;
 import com.jaka.afkcompanion.gemstonecrab.GemstoneCrabOverlay;
 import com.jaka.afkcompanion.gemstonecrab.GemstoneCrabTracker;
@@ -27,16 +31,20 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
 import net.runelite.api.NPC;
 import net.runelite.api.Skill;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.CommandExecuted;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GrandExchangeOfferChanged;
 import net.runelite.api.events.HitsplatApplied;
+import net.runelite.api.events.ItemSpawned;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.StatChanged;
@@ -63,7 +71,7 @@ import net.runelite.client.util.Text;
 @PluginDescriptor(
 	name = "AFK Companion",
 	description = "Gemstone Crab burrow timer plus phone notifications for everything that ends an AFK",
-	tags = {"afk", "gemstone", "crab", "notification", "push", "ntfy", "timer", "idle", "slayer", "cannon"}
+	tags = {"afk", "gemstone", "crab", "notification", "push", "ntfy", "timer", "idle", "slayer", "cannon", "woodcutting", "forestry"}
 )
 public class AfkCompanionPlugin extends Plugin
 {
@@ -168,6 +176,10 @@ public class AfkCompanionPlugin extends Plugin
 	private ConfigManager configManager;
 
 	private final Map<NPC, Integer> pendingRandomEvents = new HashMap<>();
+	private final ForestryWatch forestryWatch = new ForestryWatch();
+
+	/** Tier of a clue nest that hit the ground this tick; the nest message arrives right after. */
+	private ClueNestTier clueNestThisTick;
 
 	private NavigationButton navButton;
 	private CrabInfoBox burrowInfoBox;
@@ -232,6 +244,7 @@ public class AfkCompanionPlugin extends Plugin
 		tracker.resetSession();
 		watchdog.reset();
 		pendingRandomEvents.clear();
+		forestryWatch.clear();
 	}
 
 	@Provides
@@ -351,6 +364,12 @@ public class AfkCompanionPlugin extends Plugin
 			warnedBurrowSoon = false;
 			warnedNotAttacking = false;
 			pendingRandomEvents.clear();
+			forestryWatch.clear();
+		}
+		else if (state == GameState.LOADING)
+		{
+			// Objects are dropped without a despawn event on a scene reload; NPCs carry over.
+			forestryWatch.clear(part -> part instanceof GameObject);
 		}
 	}
 
@@ -366,6 +385,8 @@ public class AfkCompanionPlugin extends Plugin
 			warnedBurrowSoon = false;
 			warnedNotAttacking = false;
 		}
+
+		onForestryPartSpawned(npc, ForestryEvent.forNpc(npc.getId()));
 
 		if (config.randomEventNotify() && RANDOM_EVENT_NPCS.contains(Text.standardize(npc.getName())))
 		{
@@ -383,10 +404,33 @@ public class AfkCompanionPlugin extends Plugin
 
 		tracker.onNpcDespawned(npc);
 		pendingRandomEvents.remove(npc);
+		forestryWatch.onDespawn(npc);
 
 		if (wasCrab && config.crabEnabled() && config.crabNotifyBurrow() && damage > 0)
 		{
 			notify(NotificationCategory.CRAB, "Gemstone Crab", "The crab burrowed away. The shell is minable for 90s - then follow it through the tunnel.", 4);
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned event)
+	{
+		final GameObject object = event.getGameObject();
+		onForestryPartSpawned(object, ForestryEvent.forObject(object.getId()));
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned event)
+	{
+		forestryWatch.onDespawn(event.getGameObject());
+	}
+
+	@Subscribe
+	public void onItemSpawned(ItemSpawned event)
+	{
+		if (clueNestThisTick == null)
+		{
+			clueNestThisTick = ClueNestTier.fromItem(event.getItem().getId());
 		}
 	}
 
@@ -422,7 +466,11 @@ public class AfkCompanionPlugin extends Plugin
 		if (event.getType() == ChatMessageType.GAMEMESSAGE || event.getType() == ChatMessageType.SPAM)
 		{
 			final ChatAlert alert = ChatAlert.of(message);
-			if (alert != null)
+			if (alert == ChatAlert.BIRD_NEST)
+			{
+				onBirdNest();
+			}
+			else if (alert != null)
 			{
 				watchdog.onChatAlert(alert, this::notify);
 			}
@@ -476,6 +524,9 @@ public class AfkCompanionPlugin extends Plugin
 	@Subscribe
 	public void onGameTick(GameTick event)
 	{
+		clueNestThisTick = null;
+		forestryWatch.onTick();
+
 		if (!tracker.isCrabPresent())
 		{
 			scanForCrab();
@@ -605,6 +656,61 @@ public class AfkCompanionPlugin extends Plugin
 			{
 				break;
 			}
+		}
+	}
+
+	// ------------------------------------------------------------------ forestry
+
+	private void onForestryPartSpawned(Object part, ForestryEvent event)
+	{
+		if (event == null)
+		{
+			return;
+		}
+
+		// Tracked even while switched off, so turning a switch on mid event does not report it late.
+		if (forestryWatch.onSpawn(part, event) && forestryEventWanted(event))
+		{
+			notify(NotificationCategory.FORESTRY, "Forestry", event.getDisplayName() + " event has started.", 4);
+		}
+	}
+
+	private boolean forestryEventWanted(ForestryEvent event)
+	{
+		switch (event)
+		{
+			case RISING_ROOTS:
+				return config.forestryRisingRootsNotify();
+			case STRUGGLING_SAPLING:
+				return config.forestryStrugglingSaplingNotify();
+			case FLOWERING_TREE:
+				return config.forestryFloweringTreeNotify();
+			case LEPRECHAUN:
+				return config.forestryLeprechaunNotify();
+			case POACHERS:
+				return config.forestryPoachersNotify();
+			case PHEASANT_CONTROL:
+				return config.forestryPheasantControlNotify();
+			case BEE_HIVE:
+				return config.forestryBeeHiveNotify();
+			case ENCHANTMENT_RITUAL:
+				return config.forestryEnchantmentRitualNotify();
+			case FRIENDLY_ENT:
+				return config.forestryFriendlyEntNotify();
+			default:
+				return false;
+		}
+	}
+
+	private void onBirdNest()
+	{
+		final ClueNestTier tier = clueNestThisTick;
+		clueNestThisTick = null;
+
+		final String message = BirdNest.message(config.birdNestNotify(), config.clueNestTier(), tier);
+		if (message != null)
+		{
+			notify(NotificationCategory.FORESTRY, "Bird's nest", message, BirdNest.priority(tier));
 		}
 	}
 
@@ -853,6 +959,8 @@ public class AfkCompanionPlugin extends Plugin
 				return config.screenshotSkilling();
 			case SLAYER:
 				return config.screenshotSlayer();
+			case FORESTRY:
+				return config.screenshotForestry();
 			case ACCOUNT:
 				return config.screenshotAccount();
 			default:

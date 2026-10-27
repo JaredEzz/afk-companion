@@ -1,5 +1,6 @@
 package com.jaka.afkcompanion;
 
+import com.jaka.afkcompanion.forestry.ClueNestTier;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -48,9 +49,16 @@ public interface AfkCompanionConfig extends Config
 	String slayerSection = "slayer";
 
 	@ConfigSection(
+		name = "Woodcutting and Forestry",
+		description = "Bird's nests and each Forestry event, switched on one by one",
+		position = 5
+	)
+	String forestrySection = "forestry";
+
+	@ConfigSection(
 		name = "Account events",
 		description = "Level ups, death, Grand Exchange",
-		position = 5
+		position = 6
 	)
 	String accountSection = "account";
 
@@ -149,7 +157,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "discordMentionUrgentOnly",
 		name = "Only ping when urgent",
 		description = "Ping only for the most urgent notifications - death, low hitpoints, poison, running out "
-			+ "of something, valuable drops, a superior, an empty cannon - instead of every one.",
+			+ "of something, valuable drops, a superior, an empty cannon, a clue nest - instead of every one.",
 		position = 7,
 		section = pushSection
 	)
@@ -343,10 +351,22 @@ public interface AfkCompanionConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "screenshotForestry",
+		name = "Screenshot: woodcutting and Forestry",
+		description = "Attach a picture to bird's nest and Forestry event notifications.",
+		position = 23,
+		section = pushSection
+	)
+	default boolean screenshotForestry()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "screenshotAccount",
 		name = "Screenshot: account events",
 		description = "Attach a picture to level up, death and Grand Exchange notifications.",
-		position = 23,
+		position = 24,
 		section = pushSection
 	)
 	default boolean screenshotAccount()
@@ -358,7 +378,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "quietHours",
 		name = "Quiet hours",
 		description = "Hold back notifications during the configured window.",
-		position = 24,
+		position = 25,
 		section = pushSection
 	)
 	default boolean quietHours()
@@ -371,7 +391,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "quietFrom",
 		name = "Quiet from (hour)",
 		description = "Hour the quiet window opens.",
-		position = 25,
+		position = 26,
 		section = pushSection
 	)
 	default int quietFrom()
@@ -384,7 +404,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "quietTo",
 		name = "Quiet until (hour)",
 		description = "Hour the quiet window closes. The window may wrap past midnight.",
-		position = 26,
+		position = 27,
 		section = pushSection
 	)
 	default int quietTo()
@@ -395,8 +415,8 @@ public interface AfkCompanionConfig extends Config
 	@ConfigItem(
 		keyName = "quietAllowUrgent",
 		name = "Urgent still gets through",
-		description = "During quiet hours, still deliver the most urgent notifications: death, low HP, poison, valuable drops, superiors, an empty cannon.",
-		position = 27,
+		description = "During quiet hours, still deliver the most urgent notifications: death, low HP, poison, valuable drops, superiors, an empty cannon, clue nests.",
+		position = 28,
 		section = pushSection
 	)
 	default boolean quietAllowUrgent()
@@ -843,6 +863,141 @@ public interface AfkCompanionConfig extends Config
 	default boolean expeditiousBrokeNotify()
 	{
 		return true;
+	}
+
+	// ---------------------------------------------------------------- woodcutting and forestry
+
+	@ConfigItem(
+		keyName = "birdNestNotify",
+		name = "Bird's nest",
+		description = "Notify when any bird's nest falls out of the tree.",
+		position = 0,
+		section = forestrySection
+	)
+	default boolean birdNestNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "clueNestTier",
+		name = "Clue nest",
+		description = "Notify for clue nests of this tier or higher even when the bird's nest switch is off. "
+			+ "Clue nests count as urgent.",
+		position = 1,
+		section = forestrySection
+	)
+	default ClueNestTier clueNestTier()
+	{
+		return ClueNestTier.DISABLED;
+	}
+
+	@ConfigItem(
+		keyName = "forestryRisingRootsNotify",
+		name = "Rising Roots",
+		description = "Notify when a Rising Roots Forestry event starts.",
+		position = 2,
+		section = forestrySection
+	)
+	default boolean forestryRisingRootsNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryStrugglingSaplingNotify",
+		name = "Struggling Sapling",
+		description = "Notify when a Struggling Sapling Forestry event starts.",
+		position = 3,
+		section = forestrySection
+	)
+	default boolean forestryStrugglingSaplingNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryFloweringTreeNotify",
+		name = "Flowering Tree",
+		description = "Notify when a Flowering Tree Forestry event starts.",
+		position = 4,
+		section = forestrySection
+	)
+	default boolean forestryFloweringTreeNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryLeprechaunNotify",
+		name = "Leprechaun",
+		description = "Notify when a Leprechaun Forestry event starts.",
+		position = 5,
+		section = forestrySection
+	)
+	default boolean forestryLeprechaunNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryPoachersNotify",
+		name = "Poachers",
+		description = "Notify when a Poachers Forestry event starts.",
+		position = 6,
+		section = forestrySection
+	)
+	default boolean forestryPoachersNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryPheasantControlNotify",
+		name = "Pheasant Control",
+		description = "Notify when a Pheasant Control Forestry event starts.",
+		position = 7,
+		section = forestrySection
+	)
+	default boolean forestryPheasantControlNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryBeeHiveNotify",
+		name = "Bee Hive",
+		description = "Notify when a Bee Hive Forestry event starts.",
+		position = 8,
+		section = forestrySection
+	)
+	default boolean forestryBeeHiveNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryEnchantmentRitualNotify",
+		name = "Enchantment Ritual",
+		description = "Notify when an Enchantment Ritual Forestry event starts.",
+		position = 9,
+		section = forestrySection
+	)
+	default boolean forestryEnchantmentRitualNotify()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "forestryFriendlyEntNotify",
+		name = "Friendly Ent",
+		description = "Notify when a Friendly Ent Forestry event starts.",
+		position = 10,
+		section = forestrySection
+	)
+	default boolean forestryFriendlyEntNotify()
+	{
+		return false;
 	}
 
 	// ---------------------------------------------------------------- account

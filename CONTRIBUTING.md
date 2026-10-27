@@ -53,7 +53,8 @@ That file logs into your account without a password. Never share it or commit it
 ```
 
 The tracker's countdown logic, number formatting, quiet hours, name matching, Discord
-mention handling, the slayer and cannon chat messages and the low cannonball warning are covered. Anything that can be tested without a running client should be.
+mention handling, the slayer and cannon chat messages, the low cannonball warning, Forestry event matching and
+de-duplication, and bird's nest tiers are covered. Anything that can be tested without a running client should be.
 
 ## Project layout
 
@@ -68,6 +69,7 @@ src/main/java/com/jaka/afkcompanion/
   watch/AfkWatchdog.java           every general AFK warning
   watch/ChatAlert.java             game messages that end an AFK: superior, cannon, bracelets
   watch/CannonWarning.java         when the cannonball count is worth a warning
+  forestry/                        Forestry event ids, one notification per event, bird's nests
   stats/SessionStats.java          session and persisted lifetime totals
   util/                            formatting, quiet hours, name matching
 ```

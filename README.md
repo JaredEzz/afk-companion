@@ -44,6 +44,12 @@ from your watch list ran out, low ammo, special attack back to 100%, aggression 
 **Slayer and cannon** — a superior spawned, your dwarf multicannon ran out of cannonballs (with an
 optional warning a few balls earlier), your bracelet of slaughter or expeditious bracelet crumbled.
 
+**Woodcutting and Forestry** — a bird's nest fell (or only clue nests from a tier you pick
+upwards), and each Forestry event with its own switch: Rising Roots, Struggling Sapling,
+Flowering Tree, Leprechaun, Poachers, Pheasant Control, Bee Hive, Enchantment Ritual and
+Friendly Ent. An event is reported once, however many roots or bushes it is made of. These are
+off by default, because they are noise unless you are chopping.
+
 **Account events** — level ups, death, Grand Exchange offers completing.
 
 Two of these deserve a caveat:
@@ -77,18 +83,19 @@ Useful settings:
 
 - **Only when unfocused** (on by default) — stay silent while you are actually at the keyboard.
 - **Screenshots** — chosen per kind of event, not all at once: separate switches for Gemstone
-  Crab, AFK safeguards, skilling and combat, slayer and cannon, and account events. A picture
-  is worth it for a crab burrow and pure noise for a level up. ntfy and Discord only; if the
-  window is not drawing, the notification goes out after two seconds without it.
+  Crab, AFK safeguards, skilling and combat, slayer and cannon, woodcutting and Forestry, and
+  account events. A picture is worth it for a crab burrow and pure noise for a level up. ntfy
+  and Discord only; if the window is not drawing, the notification goes out after two seconds
+  without it.
 - **Quiet hours** — a window (may wrap past midnight) where notifications are held back, with an
   option to let urgent ones through anyway.
 - **Cooldown** — minimum gap between notifications.
 - **Discord mention** — who to ping. Paste a user id, a role id prefixed with `&`, or
   `@everyone` / `@here`; get an id by enabling Developer Mode in Discord and using Copy ID.
   *Only ping when urgent* limits it to death, low hitpoints, poison, running out of something,
-  valuable drops, a superior and an empty cannon. The ping goes in the message content rather
-  than the embed, because a mention inside an embed is displayed but never actually notifies
-  anyone.
+  valuable drops, a superior, an empty cannon and clue nests. The ping goes in the message
+  content rather than the embed, because a mention inside an embed is displayed but never
+  actually notifies anyone.
 
 ## Asking the client a question from your phone
 

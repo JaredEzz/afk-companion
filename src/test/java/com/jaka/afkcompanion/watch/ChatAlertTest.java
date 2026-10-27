@@ -50,6 +50,12 @@ public class ChatAlertTest
 	}
 
 	@Test
+	public void recognisesABirdsNest()
+	{
+		assertEquals(ChatAlert.BIRD_NEST, ChatAlert.of("A bird's nest falls out of the tree."));
+	}
+
+	@Test
 	public void ignoresEverythingElse()
 	{
 		assertNull(ChatAlert.of("You get some logs."));

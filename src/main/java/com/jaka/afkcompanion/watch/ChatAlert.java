@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 /**
  * Game messages that end an AFK on their own, with nothing else in the client to watch for.
- * The texts are the same ones the core Slayer, Cannon and Item Charges plugins
+ * The texts are the same ones the core Slayer, Cannon, Item Charges and Woodcutting plugins
  * listen for.
  */
 public enum ChatAlert
@@ -12,7 +12,8 @@ public enum ChatAlert
 	SUPERIOR,
 	CANNON_EMPTY,
 	SLAUGHTER_BROKE,
-	EXPEDITIOUS_BROKE;
+	EXPEDITIOUS_BROKE,
+	BIRD_NEST;
 
 	/*
 	 * A bracelet reports every activation in one line and only breaks when that line ends in
@@ -42,6 +43,11 @@ public enum ChatAlert
 		if (message.contains("Your cannon is out of ammo!"))
 		{
 			return CANNON_EMPTY;
+		}
+
+		if (message.contains("A bird's nest falls out of the tree"))
+		{
+			return BIRD_NEST;
 		}
 
 		if (SLAUGHTER_BROKE_PATTERN.matcher(message).find())
