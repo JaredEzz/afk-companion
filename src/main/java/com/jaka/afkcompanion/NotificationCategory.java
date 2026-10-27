@@ -18,6 +18,9 @@ public enum NotificationCategory
 	/** Skilling and combat: idle animation, inventory, supplies, aggression, special attack. */
 	SKILLING,
 
+	/** Slayer and cannon: superiors, an empty cannon, slayer bracelets breaking. */
+	SLAYER,
+
 	/** Account events: level ups, death, Grand Exchange. */
 	ACCOUNT
 }

@@ -52,8 +52,8 @@ That file logs into your account without a password. Never share it or commit it
 ./gradlew test
 ```
 
-The tracker's countdown logic, number formatting, quiet hours, name matching and Discord
-mention handling are covered. Anything that can be tested without a running client should be.
+The tracker's countdown logic, number formatting, quiet hours, name matching, Discord
+mention handling, the slayer and cannon chat messages and the low cannonball warning are covered. Anything that can be tested without a running client should be.
 
 ## Project layout
 
@@ -66,6 +66,8 @@ src/main/java/com/jaka/afkcompanion/
   push/NtfyControl.java            read-only control channel from your phone
   gemstonecrab/                    tracker, overlay, infobox timers
   watch/AfkWatchdog.java           every general AFK warning
+  watch/ChatAlert.java             game messages that end an AFK: superior, cannon, bracelets
+  watch/CannonWarning.java         when the cannonball count is worth a warning
   stats/SessionStats.java          session and persisted lifetime totals
   util/                            formatting, quiet hours, name matching
 ```

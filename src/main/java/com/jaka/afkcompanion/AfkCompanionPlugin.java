@@ -11,6 +11,7 @@ import com.jaka.afkcompanion.stats.SessionStats;
 import com.jaka.afkcompanion.util.Format;
 import com.jaka.afkcompanion.util.QuietHours;
 import com.jaka.afkcompanion.watch.AfkWatchdog;
+import com.jaka.afkcompanion.watch.ChatAlert;
 import java.awt.image.BufferedImage;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.api.events.StatChanged;
+import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.gameval.VarPlayerID;
 import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -60,7 +63,7 @@ import net.runelite.client.util.Text;
 @PluginDescriptor(
 	name = "AFK Companion",
 	description = "Gemstone Crab burrow timer plus phone notifications for everything that ends an AFK",
-	tags = {"afk", "gemstone", "crab", "notification", "push", "ntfy", "timer", "idle"}
+	tags = {"afk", "gemstone", "crab", "notification", "push", "ntfy", "timer", "idle", "slayer", "cannon"}
 )
 public class AfkCompanionPlugin extends Plugin
 {
@@ -414,16 +417,35 @@ public class AfkCompanionPlugin extends Plugin
 			return;
 		}
 
+		final String message = Text.removeTags(event.getMessage());
+
+		if (event.getType() == ChatMessageType.GAMEMESSAGE || event.getType() == ChatMessageType.SPAM)
+		{
+			final ChatAlert alert = ChatAlert.of(message);
+			if (alert != null)
+			{
+				watchdog.onChatAlert(alert, this::notify);
+			}
+		}
+
 		final Pattern pattern = chatPattern();
 		if (pattern == null)
 		{
 			return;
 		}
 
-		final String message = Text.removeTags(event.getMessage());
 		if (pattern.matcher(message).find())
 		{
 			notify(NotificationCategory.AFK, "Chat trigger", message, 4);
+		}
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged event)
+	{
+		if (event.getVarpId() == VarPlayerID.ROCKTHROWER && event.getVarbitId() == -1)
+		{
+			watchdog.onCannonballsChanged(event.getValue(), this::notify);
 		}
 	}
 
@@ -829,6 +851,8 @@ public class AfkCompanionPlugin extends Plugin
 				return config.screenshotAfk();
 			case SKILLING:
 				return config.screenshotSkilling();
+			case SLAYER:
+				return config.screenshotSlayer();
 			case ACCOUNT:
 				return config.screenshotAccount();
 			default:

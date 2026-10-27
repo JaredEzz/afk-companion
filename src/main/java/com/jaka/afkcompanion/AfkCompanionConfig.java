@@ -41,9 +41,16 @@ public interface AfkCompanionConfig extends Config
 	String skillSection = "skill";
 
 	@ConfigSection(
+		name = "Slayer and cannon",
+		description = "Superiors, an empty cannon and slayer bracelets breaking",
+		position = 4
+	)
+	String slayerSection = "slayer";
+
+	@ConfigSection(
 		name = "Account events",
 		description = "Level ups, death, Grand Exchange",
-		position = 4
+		position = 5
 	)
 	String accountSection = "account";
 
@@ -142,7 +149,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "discordMentionUrgentOnly",
 		name = "Only ping when urgent",
 		description = "Ping only for the most urgent notifications - death, low hitpoints, poison, running out "
-			+ "of something, valuable drops - instead of every one.",
+			+ "of something, valuable drops, a superior, an empty cannon - instead of every one.",
 		position = 7,
 		section = pushSection
 	)
@@ -324,10 +331,22 @@ public interface AfkCompanionConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "screenshotSlayer",
+		name = "Screenshot: slayer and cannon",
+		description = "Attach a picture to superior, cannon and slayer bracelet notifications.",
+		position = 22,
+		section = pushSection
+	)
+	default boolean screenshotSlayer()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "screenshotAccount",
 		name = "Screenshot: account events",
 		description = "Attach a picture to level up, death and Grand Exchange notifications.",
-		position = 22,
+		position = 23,
 		section = pushSection
 	)
 	default boolean screenshotAccount()
@@ -339,7 +358,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "quietHours",
 		name = "Quiet hours",
 		description = "Hold back notifications during the configured window.",
-		position = 23,
+		position = 24,
 		section = pushSection
 	)
 	default boolean quietHours()
@@ -352,7 +371,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "quietFrom",
 		name = "Quiet from (hour)",
 		description = "Hour the quiet window opens.",
-		position = 24,
+		position = 25,
 		section = pushSection
 	)
 	default int quietFrom()
@@ -365,7 +384,7 @@ public interface AfkCompanionConfig extends Config
 		keyName = "quietTo",
 		name = "Quiet until (hour)",
 		description = "Hour the quiet window closes. The window may wrap past midnight.",
-		position = 25,
+		position = 26,
 		section = pushSection
 	)
 	default int quietTo()
@@ -376,8 +395,8 @@ public interface AfkCompanionConfig extends Config
 	@ConfigItem(
 		keyName = "quietAllowUrgent",
 		name = "Urgent still gets through",
-		description = "During quiet hours, still deliver the most urgent notifications: death, low HP, poison, valuable drops.",
-		position = 26,
+		description = "During quiet hours, still deliver the most urgent notifications: death, low HP, poison, valuable drops, superiors, an empty cannon.",
+		position = 27,
 		section = pushSection
 	)
 	default boolean quietAllowUrgent()
@@ -759,6 +778,71 @@ public interface AfkCompanionConfig extends Config
 	default int aggroWarnSeconds()
 	{
 		return 60;
+	}
+
+	// ---------------------------------------------------------------- slayer and cannon
+
+	@ConfigItem(
+		keyName = "superiorNotify",
+		name = "Superior spawned",
+		description = "Notify when a superior slayer monster appears. It despawns if you leave it, so this counts as urgent.",
+		position = 0,
+		section = slayerSection
+	)
+	default boolean superiorNotify()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "cannonEmptyNotify",
+		name = "Cannon out of ammo",
+		description = "Notify when your dwarf multicannon runs out of cannonballs.",
+		position = 1,
+		section = slayerSection
+	)
+	default boolean cannonEmptyNotify()
+	{
+		return true;
+	}
+
+	@Range(min = 0, max = 30)
+	@ConfigItem(
+		keyName = "cannonLowThreshold",
+		name = "Low cannonball warning",
+		description = "Warn when your cannon has this many cannonballs or fewer left, before it runs dry. 0 disables it. "
+			+ "Keep it well above zero: a warning sent just before the cannon empties can use up the cooldown "
+			+ "and hold back the out of ammo notification.",
+		position = 2,
+		section = slayerSection
+	)
+	default int cannonLowThreshold()
+	{
+		return 0;
+	}
+
+	@ConfigItem(
+		keyName = "slaughterBrokeNotify",
+		name = "Bracelet of slaughter broke",
+		description = "Notify when your bracelet of slaughter crumbles to dust.",
+		position = 3,
+		section = slayerSection
+	)
+	default boolean slaughterBrokeNotify()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "expeditiousBrokeNotify",
+		name = "Expeditious bracelet broke",
+		description = "Notify when your expeditious bracelet crumbles to dust.",
+		position = 4,
+		section = slayerSection
+	)
+	default boolean expeditiousBrokeNotify()
+	{
+		return true;
 	}
 
 	// ---------------------------------------------------------------- account
